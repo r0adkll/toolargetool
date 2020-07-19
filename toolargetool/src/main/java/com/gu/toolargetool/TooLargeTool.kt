@@ -169,6 +169,13 @@ fun sizeTreeFromBundle(bundle: Bundle): SizeTree {
             if (value is Bundle) {
                 val subtree = sizeTreeFromBundle(value)
                 results += subtree.copy(key = "$key.Bundle${System.identityHashCode(value)}")
+            } else if (value is Iterable<*>) {
+                val subTrees = mutableListOf<SizeTree>()
+                val iterValues = value.toList()
+                for (iterValue in iterValues) {
+                    subTrees += SizeTree(iterValue.toString(), 0)
+                }
+                results += SizeTree("$key.${value.javaClass.simpleName}", iterValues.size, subTrees)
             }
         }
     } finally {
