@@ -140,11 +140,18 @@ fun sizeTreeFromBundle(bundle: Bundle): SizeTree {
         var bundleSize = sizeAsParcel(bundle)
         // Iterate over copy's keys because we're removing those of the original bundle
         for (key in copy.keySet()) {
+            val value = bundle[key]
             bundle.remove(key)
             val newBundleSize = sizeAsParcel(bundle)
             val valueSize = bundleSize - newBundleSize
             results.add(SizeTree(key, valueSize, emptyList()))
             bundleSize = newBundleSize
+
+            // Now let's see if the value is a sub bundle, or another item we can tree out
+            if (value is Bundle) {
+                val subtree = sizeTreeFromBundle(value)
+                results += subtree.copy(key = "$key.Bundle${System.identityHashCode(value)}")
+            }
         }
     } finally {
         // Put everything back into original bundle
