@@ -69,13 +69,13 @@ object TooLargeTool {
         return result
     }
 
-    private fun subTreesBreakdown(sizeTrees: List<SizeTree>, depth: Int = 1): String {
+    private fun subTreesBreakdown(sizeTrees: List<SizeTree>, depth: Int = 0): String {
         var result = ""
 
         for ((key, totalSize, subTrees) in sizeTrees) {
             result += String.format(
                 Locale.UK,
-                "${indent(depth)}* %s = %,.1f KB",
+                "\n${indent(depth)}* %s = %,.1f KB",
                 key, KB(totalSize)
             )
 
@@ -87,8 +87,8 @@ object TooLargeTool {
         return result
     }
 
-    private fun indent(depth: Int = 1): String {
-        return "\n".repeat(depth)
+    private fun indent(depth: Int = 0): String {
+        return "\t".repeat(depth)
     }
 
     private fun KB(bytes: Int): Float {
