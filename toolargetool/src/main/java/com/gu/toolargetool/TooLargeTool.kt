@@ -63,14 +63,32 @@ object TooLargeTool {
                 "%s contains %d keys and measures %,.1f KB when serialized as a Parcel",
                 key, subTrees.size, KB(totalSize)
         )
-        for ((key1, totalSize1) in subTrees) {
-            result += String.format(
-                    Locale.UK,
-                    "\n* %s = %,.1f KB",
-                    key1, KB(totalSize1)
-            )
-        }
+
+        result += subTreesBreakdown(subTrees)
+
         return result
+    }
+
+    private fun subTreesBreakdown(sizeTrees: List<SizeTree>, depth: Int = 1): String {
+        var result = ""
+
+        for ((key, totalSize, subTrees) in sizeTrees) {
+            result += String.format(
+                Locale.UK,
+                "${indent(depth)}* %s = %,.1f KB",
+                key, KB(totalSize)
+            )
+
+            if (subTrees.isNotEmpty()) {
+                result += subTreesBreakdown(subTrees, depth + 1)
+            }
+        }
+
+        return result
+    }
+
+    private fun indent(depth: Int = 1): String {
+        return "\n".repeat(depth)
     }
 
     private fun KB(bytes: Int): Float {
